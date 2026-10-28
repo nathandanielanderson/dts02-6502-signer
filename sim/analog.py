@@ -138,13 +138,16 @@ def supervisor_margin():
 def report():
     lines = []
     o = oscillator()
-    lines.append(f"Oscillator 10k/330p: {o['min_hz']/1e3:.0f}-{o['max_hz']/1e3:.0f} kHz over "
+    lines.append(f"Oscillator 10k/330p (rev 0.3): {o['min_hz']/1e3:.0f}-{o['max_hz']/1e3:.0f} kHz over "
                  f"HC14 threshold/R/C spread (mid-threshold {o['mid_hz']/1e3:.0f} kHz); "
                  f"{100*o['frac_above_400k']:.0f}% of corners exceed 400 kHz")
     c, oc = capacitor_for_ceiling()
     if c:
         lines.append(f"  smallest C with worst case <=400 kHz: {c*1e12:.0f} pF "
                      f"({oc['min_hz']/1e3:.0f}-{oc['max_hz']/1e3:.0f} kHz)")
+    o4 = oscillator(c=560e-12)
+    lines.append(f"Oscillator 10k/560p (rev 0.4): {o4['min_hz']/1e3:.0f}-{o4['max_hz']/1e3:.0f} kHz master, "
+                 f"{o4['min_hz']/6e3:.0f}-{o4['max_hz']/6e3:.0f} kHz CPU (mid-threshold {o4['mid_hz']/1e3:.0f} kHz)")
     r = reset_release()
     lines.append(f"Reset release 100k/1uF: {r['min_s']*1e3:.0f}-{r['max_s']*1e3:.0f} ms "
                  f"(mid {r['typ_s']*1e3:.0f} ms); spec states 70-90 ms")

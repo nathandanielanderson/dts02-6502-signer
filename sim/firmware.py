@@ -23,7 +23,7 @@ RFC_SIG = bytes.fromhex(
 
 SCENARIOS = {
     "idle": 0, "ram": 1, "msg_fault": 2, "res_fault": 3, "msg_frozen": 4,
-    "record_ok": 5, "record_bad": 6, "mirrors": 7, "font": 8,
+    "record_ok": 5, "record_bad": 6, "mirrors": 7, "font": 8, "lamp": 9,
 }
 
 
@@ -224,7 +224,10 @@ d7:     CMP #7
 d8:     CMP #8
         BNE d9
         JMP sc_font
-d9:     JMP done
+d9:     CMP #9
+        BNE d10
+        JMP sc_lamp
+d10:    JMP done
 
 done:   JMP done
 
@@ -273,6 +276,7 @@ wd_ok:  JSR nop_sub
         BNE wd
         LDA $000F
         STA $0280
+        JSR show_errs           ; '-' then the error count in hex on digits 0-2
         JMP done
 nop_sub: PHA
         PLA
@@ -372,6 +376,41 @@ sc_mirrors:
 sc_font:
         JSR show_font
         JMP done
+
+; ---------------- scenario 9: lamp test, all 128 segments on ---------------
+sc_lamp:
+        LDX #0
+        LDA #$FF
+sl:     STA $0010,X
+        INX
+        CPX #16
+        BNE sl
+        JSR show_page
+        JMP done
+
+show_errs:                      ; A = count: digits '-', hi, lo; rest blank
+        PHA
+        LSR A
+        LSR A
+        LSR A
+        LSR A
+        TAX
+        LDA font,X
+        STA $11
+        PLA
+        AND #$0F
+        TAX
+        LDA font,X
+        STA $12
+        LDA #$40
+        STA $10
+        LDX #3
+        LDA #0
+sel:    STA $0010,X
+        INX
+        CPX #16
+        BNE sel
+        JMP show_page
 
 show_font:
         LDX #0

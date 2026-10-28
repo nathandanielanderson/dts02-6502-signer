@@ -83,7 +83,7 @@ ICs (notch toward row 1): U1 pin 1 at BB1:c41, U5 pin 1 at BB1:e14, U6 pin 1 at 
 | R_CPU_BE | 10k | BB1:f45 (CPU_BE), BB1:R+@45 (VCC) |
 | R_CPU_SOB | 10k | BB1:f43 (CPU_SOB), BB1:R+@43 (VCC) |
 | R_OSC | 10k | BB1:a14 (OSC_RC), BB1:a15 (MASTER_CLK) |
-| C_OSC | 330p C0G | BB1:b14 (OSC_RC), BB1:L-@14 (GND) |
+| C_OSC | 560p C0G | BB1:b14 (OSC_RC), BB1:L-@14 (GND) |
 | R_RST | 100k | BB1:a19 (COLD_CLEAR_N), BB1:g19 (RESET_RC) |
 | C_RST | 1uF | BB1:h19 (RESET_RC), BB1:R-@19 (GND) |
 | R_RSTD | 1k | BB1:i19 (RESET_RC), BB1:f21 (RST_DIODE) |

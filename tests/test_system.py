@@ -30,6 +30,23 @@ class TestPowerUp(unittest.TestCase):
         self.assertEqual(b.net("DISPLAY_OE_N"), 1)
 
 
+class TestBringUpScenarios(unittest.TestCase):
+    """Scenarios added for the physical bring-up (wiring/BUILD.md)."""
+
+    def test_lamp_scenario_lights_all_128_segments(self):
+        b = Bench(scenario="lamp", seed=26)
+        b.run_to("done")
+        self.assertEqual(b.h.display(), [0xFF] * 16)
+        self.assertEqual(b.net("DISPLAY_ENABLE"), 1)
+        self.assertEqual(b.violations(), [])
+
+    def test_ram_scenario_reports_its_error_count_on_the_display(self):
+        b = Bench(scenario="ram", seed=27)
+        b.run_to("done")
+        self.assertEqual(b.display_text(), "-00" + " " * 13)
+        self.assertEqual(b.violations(), [])
+
+
 class TestLocks(unittest.TestCase):
     def test_ram_banks_before_locking(self):
         b = Bench(scenario="ram", seed=23)

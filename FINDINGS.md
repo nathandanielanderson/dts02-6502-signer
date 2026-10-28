@@ -2,7 +2,7 @@
 
 These results come from the simulation and checks in `sim/` (see `README.md`), run against revision 0.3 of `spec.md`. Each finding names the test that reproduces it.
 
-**Status:** revision 0.4 of `spec.md` incorporates F1, F2, F3, F4, F5, F6, F7, F9 and F10. F11 and F12 came from the later firmware and brownout work. F11 is partly addressed by firmware optimization; the rest is an open decision. The simulator now models rev 0.4 by default; pass `--rev03` (or `mutations=["rev03"]`) to reproduce the rev 0.3 behavior described here. F8 is informational.
+**Status:** revision 0.4 of `spec.md` incorporates F1, F2, F3, F4, F5, F6, F7, F9 and F10. F11 and F12 came from the later firmware and brownout work. F11 is partly addressed by firmware optimization; the rest is an open decision. The simulator now models rev 0.4 by default; pass `--rev03` (or `mutations=["rev03"]`) to reproduce the rev 0.3 behavior described here. F8 is informational. F13 came from generating the phased build sequence (`wiring/BUILD.md`) and is a text correction to Section 11.1.
 
 ## Summary
 
@@ -142,6 +142,14 @@ An asynchronous cold clear drops PHI2 within tens of nanoseconds. The SRAM write
 - the firmware performs a clean fresh boot.
 
 This is harmless under Section 10.1, because a cold clear always starts a new session and RAM is never trusted afterwards. A live-key design must keep that rule.
+
+### F13. Low (text): Section 11.1 step 3 omits the gate that makes the read window
+
+- **Spec reference:** Section 11.1 step 3, "Fit U1/U3/U4/U44/U8–U13".
+- **Mechanism:** revision 0.4 moved RD_WIN_N from U10 gate 3 to U18 gate 2 (Section 8). RD_WIN_N is the output enable of the ROM (U3 pin 22), so a board built strictly in the step-3 order has no ROM reads until step 5 fits U18.
+- **Evidence:** `sim/buildplan.py` assigns every IC, part and wire of the layout to a Section 11.1 phase and then scans each phase's partial netlist for inputs with no fitted driver. With U18 left for step 5, U3 pin 22, U2 pin 22, U14/U15 pin 19 and U11 pin 12 are all undriven in step 3 (`tests/test_buildplan.py::test_core_phase_fits_the_read_window_gate`).
+- **Fix:** add U18 to the step-3 list. `wiring/BUILD.md` already fits it in that phase.
+- **Also found by the same scan:** besides the five straps the spec prescribes for a missing BB9 (WRITE_BLOCK, FAULT_N and the three U15 status inputs), the ordering leaves four other CMOS inputs floating for one phase each: U11 pins 12 and 13 and U45 pin 2 in step 2, U18 pin 2 in step 3. They do nothing functionally at that point, but `BUILD.md` lists them with a ground strap and the phase in which to remove it. The generated layout also carried the revision 0.3 oscillator capacitor value (330 pF); it now places the 560 pF part of Section 5.3.
 
 ## Signing firmware verification
 

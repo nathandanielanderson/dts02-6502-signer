@@ -276,7 +276,7 @@ def generate(grid=None, moves=None, cd_pullups_at_cpu=False, mutations=(),
     u5 = lambda p: L.pin_hole[("U5", p)]
     L.part("R", "R_OSC", "10k", ("OSC_RC", "BB1", dict(near_row=u5(1)[2], side="L")),
            ("MASTER_CLK", "BB1", dict(near_row=u5(2)[2], side="L")))
-    L.part("C", "C_OSC", "330p C0G", ("OSC_RC", "BB1", dict(near_row=u5(1)[2], side="L")),
+    L.part("C", "C_OSC", "560p C0G", ("OSC_RC", "BB1", dict(near_row=u5(1)[2], side="L")),
            (GND, "BB1", dict(side="L", near_row=u5(1)[2])))
     L.part("R", "R_RST", "100k", ("COLD_CLEAR_N", "BB1", dict(near_row=u5(6)[2], side="L")),
            ("RESET_RC", "BB1", dict(near_row=u5(9)[2], side="R")))

@@ -617,6 +617,49 @@ class EPROM27256(_Memory):
         self._drive_outputs(t, True, addr, t_valid, min(t_x, t_valid))
 
 
+class EEPROM28C256(EPROM27256):
+    """AT28C256 EEPROM used as a development ROM: the 62256 pinout (pin 1 =
+    A14) with /WE on pin 27 held high.  Read timing from timing.EEPROM."""
+    kind = "AT28C256"
+    ADDR = SRAM_ADDR
+    roles = {28: "vcc", 14: "gnd", 20: "in", 22: "in", 27: "in"}
+    roles.update({p: "in" for p in SRAM_ADDR})
+    roles.update({p: "tri" for p in DQ})
+
+    def __init__(self, sim, name, pins, image):
+        super().__init__(sim, name, pins, image)
+        self.TP_HZ = T.EEPROM["tDF"]
+
+    def evaluate(self, t):
+        P = T.EEPROM
+        addr = self.read_addr()
+        ce, oe = self.inp(20), self.inp(22)
+        if ce != self.prev_ce and ce == 0:
+            self.t_ce = t
+        if oe != self.prev_oe and oe == 0:
+            self.t_oe = t
+        self.prev_ce, self.prev_oe = ce, oe
+        if self.inp(27) != 1:
+            self.sim.violation(t, "we", self.name, "/WE not held high")
+        en = (ce == 0 and oe == 0)
+        if ce == X or oe == X:
+            en = True
+        sig = (en, addr if en else None)
+        if sig == self.sig:
+            return
+        changed_addr = self.sig is None or self.sig[1] != addr
+        was_en = self.sig is not None and self.sig[0]
+        self.sig = sig
+        if changed_addr:
+            self.t_addr = t
+        if not en:
+            self._drive_outputs(t, False, None, 0, 0)
+            return
+        t_valid = max(self.t_addr + P["tACC"], self.t_ce + P["tCE"], self.t_oe + P["tOE"], t)
+        t_x = t if was_en else t + 1
+        self._drive_outputs(t, True, addr, t_valid, min(t_x, t_valid))
+
+
 # ---------------------------------------------------------------------------
 # passives and loads
 # ---------------------------------------------------------------------------

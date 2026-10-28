@@ -1,0 +1,52 @@
+group,refs,qty_installed,qty_to_order,item,detail,vendor,distributor_search,source_status,common_hobby_stock
+IC,U1,1,1,WDC W65C02S6TPG-14,"PDIP-40, 0.6 in; CPU",Mouser / DigiKey,955-W65C02S6TPG-14,verified,yes
+IC,U2,1,2,Alliance AS6C62256-55PCN,"PDIP-28, 0.6 in; 32 KiB SRAM; select exact qualified suffix",Mouser / DigiKey,913-AS6C62256-55PCN,pattern,yes
+IC,U3,1,3,Microchip AT27C256R-45PU,"PDIP-28, 0.6 in; 32 KiB OTP ROM; buy at least 3 blanks for development",Mouser / DigiKey,579-AT27C256R-45PU,pattern,
+IC,U4,1,2,TI SN74HCT541N,"PDIP-20; WBUF: CPU→peripheral write buffer, enabled only in PHI2-high write cycles",Mouser / DigiKey,595-SN74HCT541N,pattern,
+IC,"U5, U17",2,3,TI SN74HC14N,PDIP-14; Clock/reset Schmitt gates; button conditioning,Mouser / DigiKey,595-SN74HC14N,pattern,
+IC,"U6, U37, U38, U45",4,5,TI SN74HCT74N,PDIP-14; PHASE Johnson counter; two lock/fault packages; cycle-direction register and third Johnson stage,Mouser / DigiKey,595-SN74HCT74N,pattern,
+IC,U7,1,2,TI SN74AC14N,PDIP-14; Fast CPU clock buffer and separate fault-latch clock; actual edge qualification required,Mouser / DigiKey,595-SN74AC14N,pattern,
+IC,U8,1,2,TI SN74HCT04N,PDIP-14; INV: bus/address inversions,Mouser / DigiKey,595-SN74HCT04N,pattern,
+IC,U9,1,2,TI CD74HC30E,PDIP-14; PAGE: eight-input NAND for $7Fxx decode,Mouser / DigiKey,595-CD74HC30E,pattern,
+IC,U10,1,2,TI SN74HCT00N,"PDIP-14; NAND: RAM select, write window, hold term",Mouser / DigiKey,595-SN74HCT00N,pattern,
+IC,"U11, U40",2,3,TI SN74HCT08N,"PDIP-14; AND: timing/reset, latch output enable, protection predicates",Mouser / DigiKey,595-SN74HCT08N,pattern,
+IC,"U12, U41",2,3,TI SN74HCT32N,"PDIP-14; OR: GPIO strobe, RAM write enable, security latches",Mouser / DigiKey,595-SN74HCT32N,pattern,
+IC,U13,1,2,TI SN74HCT138N,PDIP-16; PORT: eight I/O selects,Mouser / DigiKey,595-SN74HCT138N,pattern,
+IC,"U14, U15",2,3,TI SN74HCT541N,PDIP-20; Byte/key input buffers; enables = port select AND read window,Mouser / DigiKey,595-SN74HCT541N,pattern,
+IC,U16,1,2,TI SN74HCT273N,PDIP-20; Eight-bit GPIO/display-control latch,Mouser / DigiKey,595-SN74HCT273N,pattern,
+IC,U18,1,2,TI CD74HC10E,PDIP-14; Three-input NAND: default/fault display blanking and the read window,Mouser / DigiKey,595-CD74HC10E,pattern,
+IC,"U19, U20",2,3,TI SN74HCT244N,PDIP-20; Display fanout,Mouser / DigiKey,595-SN74HCT244N,pattern,
+IC,U21–U36,16,18,TI SN74HC595N,PDIP-16; One static segment register per display digit,Mouser / DigiKey,595-SN74HC595N,pattern,
+IC,U39,1,2,TI CD74HCT157E,PDIP-16; Select message/result bank lock,Mouser / DigiKey,595-CD74HCT157E,pattern,
+IC,U42,1,1,Microchip MCP130-460DI/TO,"TO-92, D bondout; Power supervisor; 4.35–4.60 V trip range",Mouser / DigiKey,579-MCP130-460DI/TO,pattern,
+IC,U43,1,1,ST L7805ACV,TO-220; 5 V linear regulator for battery fixture,Mouser / DigiKey,511-L7805ACV,pattern,
+IC,U44,1,2,TI SN74HCT573N,"PDIP-20; RLATCH: peripheral→CPU read latch, transparent during EARLY",Mouser / DigiKey,595-SN74HCT573N,pattern,
+discrete,,50,50,"100 nF ceramic, ≥16 V, short leads",,Amazon,,,yes
+discrete,,10,10,"10 µF electrolytic, ≥10 V",,Amazon,,,yes
+discrete,,1,1,"560 pF C0G/NP0, ≥16 V (oscillator)",,Amazon,,,
+discrete,,1,1,"1 µF, ≥10 V (reset RC)",,Amazon,,,
+discrete,,1,1,"330 nF, ≥25 V (regulator input)",,Amazon,,,
+discrete,,1,1,"100 µF electrolytic, ≥25 V",,Amazon,,,
+discrete,,1,1,"47 µF electrolytic, ≥10 V",,Amazon,,,
+discrete,,1,1,1N4148 signal diode,,Amazon,,,yes
+discrete,,1,1,1N5819 Schottky diode,,Amazon,,,
+discrete,,16,18,Kingbright SC56-11EWA common-cathode digit,,Mouser / DigiKey,604-SC56-11EWA,pattern; also DigiKey 2163728,
+discrete,,3,3,"3 mm LED (1 red FAULT, 2 yellow MESSAGE_LOCK / RESULT_LOCK)",,Amazon,,,yes
+discrete,,128,128,"3.3 kΩ resistor, 5 % or better, ≥1/8 W",,Amazon,,,
+discrete,,27,27,"10 kΩ resistor, ≥1/8 W",,Amazon,,,yes
+discrete,,20,20,"220 Ω resistor, ≥1/8 W",,Amazon,,,yes
+discrete,,12,12,"4.7 kΩ resistor, ≥1/8 W",,Amazon,,,
+discrete,,7,7,"1 kΩ resistor, ≥1/8 W",,Amazon,,,yes
+discrete,,1,1,"100 kΩ resistor, ≥1/8 W",,Amazon,,,
+discrete,,1,1,"1 kΩ resistor, 1/4 W (rail bleeder)",,Amazon,,,yes
+discrete,,1,1,Eight-pole SPST DIP switch,8 poles,Amazon,,,yes
+discrete,,6,6,Normally-open momentary pushbutton,,Amazon,,,yes
+construction,,10,10,"830-tie, 63-row solderless breadboard (BB1–BB10); buy at least one spare",,Amazon,,,yes
+construction,,1,1,Passive perfboard about 250 × 30–50 mm for the LED panel,,Amazon,,,
+construction,,1,1,Small perfboard plus screw terminals for the fused battery/regulator fixture,,Amazon,,,
+construction,,1,1,TO-220 heatsink ≤15 °C/W with hardware,,Amazon,,,
+construction,,1,1,500 mA fuse and holder,,Amazon,,,
+construction,,1,1,SPST power switch ≥1 A at 15 V DC,,Amazon,,,
+construction,,1,1,Eight-AA holder plus eight alkaline AA cells,,Amazon,,,
+construction,,1,1,"22 AWG solid hookup wire, several colours (red and black for power); about 86 m in total",,Amazon,,,yes
+development,U3 (dev),1,1,Microchip AT28C256-15PU,"PDIP-28 EEPROM; reusable development ROM, see BUILD.md",Mouser / DigiKey,579-AT28C256-15PU,pattern,yes

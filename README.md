@@ -11,6 +11,8 @@
 
 The spec covers the circuit, the breadboard layout, the bring-up plan and the firmware contract. It does not include signing firmware.
 
+**Building it:** start with `BUILDING.md`. `python3 -m sim wiring` generates the order list (`wiring/BOM.md`), the phase-by-phase build and bring-up checklist (`wiring/BUILD.md`) and the hole-level wiring list; `python3 -m sim rom` writes the ROM images for the programmer.
+
 The `sim/` directory is a pure-Python (standard library only) simulation used to verify the spec. `FINDINGS.md` reports what the verification found.
 
 ## What the simulation models
@@ -48,13 +50,14 @@ python3 -m sim run font                     # boot the test ROM; scenario chosen
 python3 -m sim run msg_fault --reset        # lock, fault, then press CPU RESET
 python3 -m sim handoff                      # Section 11.2 bus-handoff measurements
 python3 -m sim race                         # worst-case read-window corner: rev 0.3 vs rev 0.4
-python3 -m sim wiring                       # regenerate wiring/WIRING.md + wiring.csv (hole-level build list) and check it
+python3 -m sim wiring                       # regenerate wiring/WIRING.md, BUILD.md (phased bring-up), BOM.md and check them
+python3 -m sim rom                          # write _build/rom/*.bin (diagnostic, test, signer) with SHA-256 for the programmer
 python3 -m sim sign --lamports 5000         # sign a Solana transfer on the emulated 65C02, check vs RFC 8032 + OpenSSL
 ./tools/fetch_klaus.sh                      # optional: fetch Klaus Dormann's CPU test ROMs for tests/test_emu.py
-python3 -m unittest discover -s tests -v    # full test suite: 86 tests, about 7.5 minutes
+python3 -m unittest discover -s tests -v    # full test suite, about 8 minutes
 ```
 
-Scenarios for `run`: `idle`, `ram`, `msg_fault`, `res_fault`, `msg_frozen`, `record_ok`, `record_bad`, `mirrors`, `font`.
+Scenarios for `run`: `idle`, `ram`, `msg_fault`, `res_fault`, `msg_frozen`, `record_ok`, `record_bad`, `mirrors`, `font`, `lamp`. On hardware the DIP switches select them (table in `wiring/BUILD.md`).
 
 Options shared by `run`, `diag`, `handoff` and `race`:
 - `--freq KHZ`: master clock, default 380
@@ -69,7 +72,10 @@ Throughput is about 1,500 simulated CPU cycles per second.
 ```
 spec.md            the design under test (rev 0.4; rev 0.3 is in git history)
 FINDINGS.md        verification results and recommended changes
+BUILDING.md        the short path from this repo to a working board
 wiring/WIRING.md   generated hole-level breadboard build list (also wiring.csv)
+wiring/BUILD.md    generated phase-by-phase bring-up checklist with straps and measurements
+wiring/BOM.md      generated order list with distributor search strings (also bom.csv)
 sim/engine.py      event kernel, nets, contention and timing checks
 sim/parts.py       pin-level IC models
 sim/cpu65c02.py    W65C02S core (full instruction set) and bus-timing wrapper
@@ -81,6 +87,7 @@ sim/checks.py      ERC, placement, BOM, waveform measurement helpers
 sim/handoff.py     Section 11.2 measurements
 sim/corners.py     forced worst-case delay corners
 sim/layout.py      hole-level layout, jumper routing, physical connectivity
+sim/buildplan.py   build phases, straps, cut list, BOM, 28C256 development-ROM delta
 sim/signer_fw.py   Ed25519 signing firmware generator (65C02 assembly)
 sim/emu65.c        fast C W65C02S emulator with the spec's I/O, locks and fault (sim/emu.py wraps it)
 sim/solana.py      Solana legacy message construction, OpenSSL cross-check

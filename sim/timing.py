@@ -43,6 +43,9 @@ SRAM = dict(tAA=55, tACE=55, tOE=30, tOLZ=5, tCLZ=10, tOH=10, tOHZ=(2, 20),
 # AT27C256R-70 OTP EPROM (slower of the two candidate speed grades)
 EPROM = dict(tACC=70, tCE=70, tOE=30, tOH=0, tDF=(2, 25))
 
+# AT28C256-15 EEPROM (development ROM variant, see BUILD.md)
+EEPROM = dict(tACC=150, tCE=150, tOE=70, tOH=0, tDF=(2, 50))
+
 # W65C02S at 5 V
 CPU = dict(tADS=(10, 30),   # address / RWB valid after PHI2 fall (min is tAH)
            tMDS=(10, 30),   # write data valid after PHI2 rise

@@ -51,6 +51,7 @@ class Bench:
         from .firmware import FONT
         inv = {m: "0123456789AbCdEF"[i] for i, m in enumerate(FONT)}
         inv[0] = " "
+        inv[0x40] = "-"
         out = []
         for m in self.h.display():
             out.append("?" if m is None else inv.get(m, "#"))

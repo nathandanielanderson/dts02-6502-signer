@@ -8,7 +8,11 @@
   sign                  sign a Solana transfer with the 6502 firmware (fast emulator)
                         and check it against Python RFC 8032 and OpenSSL
   wiring                generate the hole-level breadboard layout + jumper list
-                        (wiring/WIRING.md, wiring/wiring.csv) and check it
+                        (wiring/WIRING.md, wiring/wiring.csv), the phase-ordered
+                        build sequence (wiring/BUILD.md) and the orderable BOM
+                        (wiring/BOM.md, wiring/bom.csv), and check them
+  rom                   write the ROM images for the programmer (_build/rom/):
+                        diagnostic, boot/test and reference signer, with SHA-256
 """
 
 import argparse
@@ -137,20 +141,64 @@ def cmd_race(a):
 
 
 def cmd_wiring(a):
-    from . import layout as LY
+    from . import buildplan as BP, layout as LY
     L = LY.generate()
     path = LY.write_docs(L, a.out)
     remap, pull, con, cap = LY.physical_netlist(L)
     problems, targets, info, _ = LY.harness_checks(L)
     s = LY.summary(L)
     print(f"wrote {path} and wiring.csv")
+    print(f"wrote {BP.write_docs(L, a.out)} and {BP.write_bom(L, a.out)} (+ bom.csv)")
+    phases, unassigned = BP.plan(L)
+    print("  phases: " + ", ".join(f"{p['key']} {len(phases[p['key']]['wires'])}w" for p in BP.PHASES)
+          + f"; unassigned wires {len(unassigned)}")
     print(f"  {s['ics']} ICs, {s['parts']} parts, {s['wires']} wires ({s['inter_board_wires']} inter-board)")
     print(f"  layout errors {len(L.errors)}, shorts {len(con['shorts'])}, opens {len(con['opens'])}")
     print(f"  harness rules: {problems or 'pass'}")
     print(f"  length targets: {targets or 'met'}")
     for k, v in info.items():
         print(f"  {k}: {v if not isinstance(v, float) else round(v)}")
-    return 1 if (L.errors or con["shorts"] or con["opens"] or problems) else 0
+    return 1 if (L.errors or con["shorts"] or con["opens"] or problems or unassigned) else 0
+
+
+def cmd_rom(a):
+    import hashlib
+    import os
+    from . import firmware as FW, signer_fw as SF
+    os.makedirs(a.out, exist_ok=True)
+    diag = specdoc.diagnostic_rom()
+    test_img, test_syms = FW.boot_rom(zero_end_page=0x40)
+    sign_img, sign_syms, _ = SF.build()
+    images = [
+        ("dts02_diag.bin", diag, None,
+         "spec Section 11.3 bus diagnostic; copies the raw DIP byte to $0200 forever"),
+        ("dts02_test.bin", test_img, test_syms,
+         "boot/test ROM: Section 10.1 state machine, scenario by DIP byte (wiring/BUILD.md)"),
+        ("dts02_signer.bin", sign_img, sign_syms,
+         "reference Ed25519 signer for the emulator; on hardware it rejects the empty envelope and halts"),
+    ]
+    ok = specdoc.sha256(diag) == specdoc.expected_diagnostic_hash()
+    sums = []
+    for name, img, syms, what in images:
+        assert len(img) == 32768, name
+        path = os.path.join(a.out, name)
+        with open(path, "wb") as f:
+            f.write(img)
+        h = hashlib.sha256(img).hexdigest()
+        sums.append(f"{h}  {name}")
+        print(f"{name:18s} {len(img)} bytes  sha256 {h}")
+        print(f"{'':18s} {what}")
+        if syms:
+            spath = path[:-4] + ".sym"
+            with open(spath, "w") as f:
+                for lab, addr in sorted(syms.items(), key=lambda kv: kv[1]):
+                    f.write(f"{addr:04X} {lab}\n")
+    with open(os.path.join(a.out, "SHA256SUMS"), "w") as f:
+        f.write("\n".join(sums) + "\n")
+    print(f"diagnostic image hash matches spec Section 11.3: {ok}")
+    print(f"ROM offset = CPU address - $8000; program with VPP at the programmer, read back and compare "
+          f"against SHA256SUMS in {a.out}/")
+    return 0 if ok else 1
 
 
 def cmd_sign(a):
@@ -197,6 +245,8 @@ def main(argv=None):
     sg.add_argument("--no-verify", action="store_true", help="skip on-device verification")
     w = sub.add_parser("wiring")
     w.add_argument("--out", default="wiring")
+    r = sub.add_parser("rom")
+    r.add_argument("--out", default="_build/rom")
     for name in ("run", "diag", "handoff", "race"):
         s = sub.add_parser(name)
         if name == "run":
@@ -211,7 +261,7 @@ def main(argv=None):
         s.add_argument("--vcd", help="write a GTKWave VCD file")
     a = p.parse_args(argv)
     fn = {"check": cmd_check, "run": cmd_run, "diag": cmd_diag, "handoff": cmd_handoff,
-          "race": cmd_race, "wiring": cmd_wiring, "sign": cmd_sign}.get(a.cmd or "check")
+          "race": cmd_race, "wiring": cmd_wiring, "sign": cmd_sign, "rom": cmd_rom}.get(a.cmd or "check")
     return fn(a)
 
 

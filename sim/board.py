@@ -13,7 +13,7 @@ import random
 
 from .cpu65c02 import W65C02S
 from .engine import Simulator
-from .parts import (HC595, HCT138, HCT157, HCT244, HCT273, HCT541, HCT573,
+from .parts import (EEPROM28C256, HC595, HCT138, HCT157, HCT244, HCT273, HCT541, HCT573,
                     HCT74, And4x2, EPROM27256, Inv6, LoadOnly, Nand3x3,
                     Nand4x2, Nand8, Oscillator, Or4x2, ResetRC, SC56Digit,
                     SeriesR, Source, SRAM62256)
@@ -94,7 +94,10 @@ def build(rom_image, master_hz=380e3, seed=1, bb9=True, reset_delay_ns=None,
         ram[22] = "nRWB"
         rom[22] = "nRWB"
     SRAM62256(sim, "U2", ram)
-    EPROM27256(sim, "U3", rom, rom_image)
+    if "rom28c256" in mut:            # development ROM: 28C256 EEPROM, pin 1 = A14, pin 27 = /WE high
+        EEPROM28C256(sim, "U3", {**rom, 1: A[14], 27: VCC}, rom_image)
+    else:
+        EPROM27256(sim, "U3", rom, rom_image)
 
     # ---- U4 write buffer, Section 6.3 ----------------------------------
     u4 = {1: "QA_N", 10: GND, 19: "RWB", 20: VCC}
