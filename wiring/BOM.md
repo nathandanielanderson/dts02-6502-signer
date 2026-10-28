@@ -27,7 +27,8 @@
 | 1 pack | 8-position DIP switch, 2.54 mm pitch | One installed; the pack gives spares. |
 | 1 | TO-220 heatsink with clip | Under 15 C/W; the L7805ACV is already in the Mouser cart. |
 | 1 each | Panel-mount 5x20mm fuse holder; 500mA 5x20mm fuses; SPST toggle switch; 8xAA battery holder with leads | Battery fixture (spec Section 5.1); can wait until the board runs on the bench supply. |
-| 2 | Double-sided prototype perfboard, 2.54 mm, about 7x3 cm and 20x8 cm | LED panel (about 250 x 40 mm) and the power fixture; plated-through holes solder far better. |
+| 1 | 12x18 cm double-sided prototype PCB, 2.54 mm | LED panel as two rows of eight digits (spec Section 2.2 allows this): each row needs 48 columns (122 mm) for the digits plus room above for the 64 segment resistors mounted upright. A single row of all 16 digits needs 244 mm, which only a 20x30 cm board cut down to about 25x5 cm gives. |
+| 1 | 5x7 cm double-sided prototype PCB, 2.54 mm | Power fixture: regulator, supervisor, capacitors, bleeder, diode and screw terminals. Usually sold in multi-size packs that include the 12x18 cm board. |
 | 1 pack | 5.08 mm 2-pin screw terminal blocks | Battery and regulator fixture connections. |
 | 1 | XGecu TL866II Plus or T48 programmer | Either programs both ROM types (AT27C256R and AT28C256 are in the device list). XGecu's Xgpro software is Windows-only; the open-source minipro tool covers both models on macOS and Linux. |
 
